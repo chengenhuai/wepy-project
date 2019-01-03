@@ -1,0 +1,502 @@
+<style lang='less'>
+.single-banner{
+  width:100%;
+  height:95%;
+  .swiper{
+    width:100%;
+    height:100%;
+    position: relative;
+    .wx-swiper-dots.wx-swiper-dots-horizontal{
+      position: absolute;
+      bottom:0;
+      display:inline-block;
+      width:100%!important;
+      height:40rpx!important;
+      text-align: center;
+    }
+    swiper-item{
+      display:block;
+      width:100%!important;
+      height:95%!important;
+      padding:0 10px;
+      box-sizing: border-box;
+      .single-content{
+        width:100%;
+        height:99%;
+        overflow: hidden;
+        border-radius: 20rpx;
+        border: 1px solid #ccc;
+        .single-content-image{
+          width:100%;
+          height:100rpx;
+          position: relative;
+          opacity: 0.15;
+          image{
+            width:100%;
+            height:250rpx;
+            position: absolute;
+            top: -50rpx;
+            left:0;
+          }
+        }
+        .single-content-header{
+          width:100%;
+          view{
+            padding-left:20rpx;
+            box-sizing: border-box;
+            &:nth-of-type(1){
+              font-weight: 600;
+              line-height: 60rpx;
+              position: relative;
+              z-index:10;
+            }
+            &:nth-of-type(2){
+              line-height:40rpx;
+              font-size: 25rpx;
+              color:#707070;
+            }
+          }
+        }
+        .single-content-point{
+          width:90%;
+          margin:0 auto;
+          height:80rpx;
+          line-height: 80rpx;
+          font-size: 28rpx;
+          display: flex;
+          justify-content: space-between;
+          color:#707070;
+        }
+        .single-content-banner{
+          width:90%;
+          margin:0 auto;
+          display:flex;
+          flex-wrap: wrap;
+          .single-content-banner-dl{
+            width:30%;
+            margin-right:5%;
+            margin-bottom:30rpx;
+            &:nth-of-type(3),
+            &:nth-of-type(6){
+              margin-right:0;
+            }
+            .single-content-banner-dl-dt{
+              width:80%;
+              height:200rpx;
+              margin:0 auto;
+              image{
+                width:100%;
+                height:100%;
+              }
+            }
+            .single-content-banner-dl-dd{
+              text-align: center;
+              font-size: 25rpx;
+              line-height: 40rpx;
+              width:100%;
+              overflow:hidden;
+              text-overflow:ellipsis;
+              white-space:nowrap
+            }
+          }
+        }
+        .single-content-button{
+          width:80%;
+          height:80rpx;
+          line-height: 80rpx;
+          margin:0 auto;
+          text-align: center;
+          background: #ffd200;
+          border-radius: 30rpx;
+          font-size: 30rpx;
+        }
+      }
+    } 
+  }
+}
+</style>
+<template>
+  <view class='container'>
+    <view class='single-banner'>
+      <swiper indicator-dots='true'
+              class='swiper'
+              indicator-color="{{color}}" 
+              indicator-active-color="{{activeColor}}"
+              next-margin='60rpx'
+              previous-margin='60rpx'
+              margin='40rpx'
+              circular=''
+      >
+          <block wx:for="{{content}}" wx:key="{{index}}">
+                <swiper-item>
+                  <view class='single-content'>
+                    <view class='single-content-image'>
+                      <image src='../images/sing_header_01.jpg'/>
+                    </view>
+                    <view class='single-content-header'>
+                      <view>{{item.title}}</view>
+                      <view>{{item.title_introduce}}</view>
+                    </view>
+                    <view class='single-content-point'>
+                      <text>{{item.name}}</text>
+                      <text>{{item.person}}人在看</text>
+                    </view>
+                    <view class='single-content-banner'>
+                      <view class='single-content-banner-dl' wx:for='{{item.banner}}' wx:for-item='value' wx:key='{{index}}'>
+                        <view class='single-content-banner-dl-dt'>
+                          <image src='{{value.url}}'/>
+                        </view>
+                        <view class='single-content-banner-dl-dd'>
+                          {{value.zodiac}}
+                        </view>
+                      </view>
+                    </view>
+                    <view class='single-content-button'>
+                      查看全部{{item.count}}部影片来源
+                    </view>
+                  </view>
+              </swiper-item>
+          </block>
+      </swiper>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Single extends wepy.page {
+    config = {
+      navigationBarTitleText: '毒家片单'
+    }
+    data = {
+      color: '#ccc',
+      activeColor: '#ffd200',
+      content: [{
+        title: '追忆港剧的巅峰时代',
+        title_introduce: 'TVB经典电视剧 每一部都值得重看十遍',
+        name: '柏拉图 创建',
+        person: 468,
+        count: 20,
+        banner: [{
+          url: '../images/sing_banner_01.jpg',
+          zodiac: '毒战'
+        }, {
+          url: '../images/sing_banner_02.jpg',
+          zodiac: '泰坦尼克号'
+        }, {
+          url: '../images/sing_banner_03.jpg',
+          zodiac: '神话'
+        }, {
+          url: '../images/sing_banner_04.jpg',
+          zodiac: '西虹市首富'
+        }, {
+          url: '../images/sing_banner_05.jpg',
+          zodiac: '无问西东'
+        }, {
+          url: '../images/sing_banner_06.jpg',
+          zodiac: '神秘巨星'
+        }]
+      }, {
+        title: '追忆港剧的巅峰时代',
+        title_introduce: 'TVB经典电视剧 每一部都值得重看十遍',
+        name: '柏拉图 创建',
+        person: 468,
+        count: 20,
+        banner: [{
+          url: '../images/sing_banner_01.jpg',
+          zodiac: '毒战'
+        }, {
+          url: '../images/sing_banner_02.jpg',
+          zodiac: '泰坦尼克号'
+        }, {
+          url: '../images/sing_banner_03.jpg',
+          zodiac: '神话'
+        }, {
+          url: '../images/sing_banner_04.jpg',
+          zodiac: '西虹市首富'
+        }, {
+          url: '../images/sing_banner_05.jpg',
+          zodiac: '无问西东'
+        }, {
+          url: '../images/sing_banner_06.jpg',
+          zodiac: '神秘巨星'
+        }]
+      }, {
+        title: '追忆港剧的巅峰时代',
+        title_introduce: 'TVB经典电视剧 每一部都值得重看十遍',
+        name: '柏拉图 创建',
+        person: 468,
+        count: 20,
+        banner: [{
+          url: '../images/sing_banner_01.jpg',
+          zodiac: '毒战'
+        }, {
+          url: '../images/sing_banner_02.jpg',
+          zodiac: '泰坦尼克号'
+        }, {
+          url: '../images/sing_banner_03.jpg',
+          zodiac: '神话'
+        }, {
+          url: '../images/sing_banner_04.jpg',
+          zodiac: '西虹市首富'
+        }, {
+          url: '../images/sing_banner_05.jpg',
+          zodiac: '无问西东'
+        }, {
+          url: '../images/sing_banner_06.jpg',
+          zodiac: '神秘巨星'
+        }]
+      }, {
+        title: '追忆港剧的巅峰时代',
+        title_introduce: 'TVB经典电视剧 每一部都值得重看十遍',
+        name: '柏拉图 创建',
+        person: 468,
+        count: 20,
+        banner: [{
+          url: '../images/sing_banner_01.jpg',
+          zodiac: '毒战'
+        }, {
+          url: '../images/sing_banner_02.jpg',
+          zodiac: '泰坦尼克号'
+        }, {
+          url: '../images/sing_banner_03.jpg',
+          zodiac: '神话'
+        }, {
+          url: '../images/sing_banner_04.jpg',
+          zodiac: '西虹市首富'
+        }, {
+          url: '../images/sing_banner_05.jpg',
+          zodiac: '无问西东'
+        }, {
+          url: '../images/sing_banner_06.jpg',
+          zodiac: '神秘巨星'
+        }]
+      }, {
+        title: '追忆港剧的巅峰时代',
+        title_introduce: 'TVB经典电视剧 每一部都值得重看十遍',
+        name: '柏拉图 创建',
+        person: 468,
+        count: 20,
+        banner: [{
+          url: '../images/sing_banner_01.jpg',
+          zodiac: '毒战'
+        }, {
+          url: '../images/sing_banner_02.jpg',
+          zodiac: '泰坦尼克号'
+        }, {
+          url: '../images/sing_banner_03.jpg',
+          zodiac: '神话'
+        }, {
+          url: '../images/sing_banner_04.jpg',
+          zodiac: '西虹市首富'
+        }, {
+          url: '../images/sing_banner_05.jpg',
+          zodiac: '无问西东'
+        }, {
+          url: '../images/sing_banner_06.jpg',
+          zodiac: '神秘巨星'
+        }]
+      }, {
+        title: '追忆港剧的巅峰时代',
+        title_introduce: 'TVB经典电视剧 每一部都值得重看十遍',
+        name: '柏拉图 创建',
+        person: 468,
+        count: 20,
+        banner: [{
+          url: '../images/sing_banner_01.jpg',
+          zodiac: '毒战'
+        }, {
+          url: '../images/sing_banner_02.jpg',
+          zodiac: '泰坦尼克号'
+        }, {
+          url: '../images/sing_banner_03.jpg',
+          zodiac: '神话'
+        }, {
+          url: '../images/sing_banner_04.jpg',
+          zodiac: '西虹市首富'
+        }, {
+          url: '../images/sing_banner_05.jpg',
+          zodiac: '无问西东'
+        }, {
+          url: '../images/sing_banner_06.jpg',
+          zodiac: '神秘巨星'
+        }]
+      }, {
+        title: '追忆港剧的巅峰时代',
+        title_introduce: 'TVB经典电视剧 每一部都值得重看十遍',
+        name: '柏拉图 创建',
+        person: 468,
+        count: 20,
+        banner: [{
+          url: '../images/sing_banner_01.jpg',
+          zodiac: '毒战'
+        }, {
+          url: '../images/sing_banner_02.jpg',
+          zodiac: '泰坦尼克号'
+        }, {
+          url: '../images/sing_banner_03.jpg',
+          zodiac: '神话'
+        }, {
+          url: '../images/sing_banner_04.jpg',
+          zodiac: '西虹市首富'
+        }, {
+          url: '../images/sing_banner_05.jpg',
+          zodiac: '无问西东'
+        }, {
+          url: '../images/sing_banner_06.jpg',
+          zodiac: '神秘巨星'
+        }]
+      }, {
+        title: '追忆港剧的巅峰时代',
+        title_introduce: 'TVB经典电视剧 每一部都值得重看十遍',
+        name: '柏拉图 创建',
+        person: 468,
+        count: 20,
+        banner: [{
+          url: '../images/sing_banner_01.jpg',
+          zodiac: '毒战'
+        }, {
+          url: '../images/sing_banner_02.jpg',
+          zodiac: '泰坦尼克号'
+        }, {
+          url: '../images/sing_banner_03.jpg',
+          zodiac: '神话'
+        }, {
+          url: '../images/sing_banner_04.jpg',
+          zodiac: '西虹市首富'
+        }, {
+          url: '../images/sing_banner_05.jpg',
+          zodiac: '无问西东'
+        }, {
+          url: '../images/sing_banner_06.jpg',
+          zodiac: '神秘巨星'
+        }]
+      }, {
+        title: '追忆港剧的巅峰时代',
+        title_introduce: 'TVB经典电视剧 每一部都值得重看十遍',
+        name: '柏拉图 创建',
+        person: 468,
+        count: 20,
+        banner: [{
+          url: '../images/sing_banner_01.jpg',
+          zodiac: '毒战'
+        }, {
+          url: '../images/sing_banner_02.jpg',
+          zodiac: '泰坦尼克号'
+        }, {
+          url: '../images/sing_banner_03.jpg',
+          zodiac: '神话'
+        }, {
+          url: '../images/sing_banner_04.jpg',
+          zodiac: '西虹市首富'
+        }, {
+          url: '../images/sing_banner_05.jpg',
+          zodiac: '无问西东'
+        }, {
+          url: '../images/sing_banner_06.jpg',
+          zodiac: '神秘巨星'
+        }]
+      }, {
+        title: '追忆港剧的巅峰时代',
+        title_introduce: 'TVB经典电视剧 每一部都值得重看十遍',
+        name: '柏拉图 创建',
+        person: 468,
+        count: 20,
+        banner: [{
+          url: '../images/sing_banner_01.jpg',
+          zodiac: '毒战'
+        }, {
+          url: '../images/sing_banner_02.jpg',
+          zodiac: '泰坦尼克号'
+        }, {
+          url: '../images/sing_banner_03.jpg',
+          zodiac: '神话'
+        }, {
+          url: '../images/sing_banner_04.jpg',
+          zodiac: '西虹市首富'
+        }, {
+          url: '../images/sing_banner_05.jpg',
+          zodiac: '无问西东'
+        }, {
+          url: '../images/sing_banner_06.jpg',
+          zodiac: '神秘巨星'
+        }]
+      }, {
+        title: '追忆港剧的巅峰时代',
+        title_introduce: 'TVB经典电视剧 每一部都值得重看十遍',
+        name: '柏拉图 创建',
+        person: 468,
+        count: 20,
+        banner: [{
+          url: '../images/sing_banner_01.jpg',
+          zodiac: '毒战'
+        }, {
+          url: '../images/sing_banner_02.jpg',
+          zodiac: '泰坦尼克号'
+        }, {
+          url: '../images/sing_banner_03.jpg',
+          zodiac: '神话'
+        }, {
+          url: '../images/sing_banner_04.jpg',
+          zodiac: '西虹市首富'
+        }, {
+          url: '../images/sing_banner_05.jpg',
+          zodiac: '无问西东'
+        }, {
+          url: '../images/sing_banner_06.jpg',
+          zodiac: '神秘巨星'
+        }]
+      }, {
+        title: '追忆港剧的巅峰时代',
+        title_introduce: 'TVB经典电视剧 每一部都值得重看十遍',
+        name: '柏拉图 创建',
+        person: 468,
+        count: 20,
+        banner: [{
+          url: '../images/sing_banner_01.jpg',
+          zodiac: '毒战'
+        }, {
+          url: '../images/sing_banner_02.jpg',
+          zodiac: '泰坦尼克号'
+        }, {
+          url: '../images/sing_banner_03.jpg',
+          zodiac: '神话'
+        }, {
+          url: '../images/sing_banner_04.jpg',
+          zodiac: '西虹市首富'
+        }, {
+          url: '../images/sing_banner_05.jpg',
+          zodiac: '无问西东'
+        }, {
+          url: '../images/sing_banner_06.jpg',
+          zodiac: '神秘巨星'
+        }]
+      }, {
+        title: '追忆港剧的巅峰时代',
+        title_introduce: 'TVB经典电视剧 每一部都值得重看十遍',
+        name: '柏拉图 创建',
+        person: 468,
+        count: 20,
+        banner: [{
+          url: '../images/sing_banner_01.jpg',
+          zodiac: '毒战'
+        }, {
+          url: '../images/sing_banner_02.jpg',
+          zodiac: '泰坦尼克号'
+        }, {
+          url: '../images/sing_banner_03.jpg',
+          zodiac: '神话'
+        }, {
+          url: '../images/sing_banner_04.jpg',
+          zodiac: '西虹市首富'
+        }, {
+          url: '../images/sing_banner_05.jpg',
+          zodiac: '无问西东'
+        }, {
+          url: '../images/sing_banner_06.jpg',
+          zodiac: '神秘巨星'
+        }]
+      }]
+    }
+  }
+</script>

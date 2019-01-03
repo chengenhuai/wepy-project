@@ -1,0 +1,55 @@
+<template>
+  <view class='container'>
+      <video src="{{dataJson.videoInfo.videoUrl}}" controls='true' poster='{{dataJson.videoInfo.thumbnailUrl}}'>
+      </video>
+      <view class='content'>{{dataJson.videoInfo.title}}</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Video extends wepy.page {
+    config = {
+      navigationBarTitleText: ''
+    }
+    data = {
+      index: 0,
+      dataJson: {}
+    }
+    onLoad(event) {
+      for (var i in event) {
+        this.index = i
+        this.$apply()
+      }
+      wepy.request({
+        url: 'https://cdnapp.dushemovie.com/dsmovieapi/ssl2/video/list_videos/1?count=3&startIndex=0',
+        method: 'GET',
+        dataType: 'json',
+        success: (res) => {
+          res.data.videoDataList.map((item, index) => {
+            if (parseInt(this.index) === parseInt(item.videoInfo.id)) {
+              this.dataJson = item
+              this.$apply()
+            }
+          })
+        },
+        fail: () => {},
+        complete: () => {}
+      })
+    }
+  }
+</script>
+
+<style lang='less'>
+video{
+  width:100%;
+  height:400rpx;
+}
+.content{
+  width:100%;
+  padding-left:20rpx;
+  box-sizing: border-box;
+  line-height: 50rpx;
+  font-size: 35rpx;
+}
+</style>

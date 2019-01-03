@@ -1,0 +1,108 @@
+<style lang='less'>
+.content{
+  width:90%;
+  display: flex;
+  flex-wrap: wrap;
+  margin:0 auto;
+  .dl{
+    width:33.33%;
+    .dt{
+      width:100%;
+      image{
+        width:90%;
+        height: 300rpx;
+        display: block;
+        margin: 0 auto;
+      }
+    }
+    .dd{
+      width:90%;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      font-size: 25rpx;
+      text{
+        display: inline-block;
+        height: 30rpx;
+        line-height: 30rpx;
+        margin:15rpx 0;
+      }
+      text.active{
+        background: orange;
+        color:brown;
+      }
+    }
+  }
+}
+.text{
+  width:100%;
+  text-align: center;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 35rpx;
+}
+</style>
+
+<template>
+  <view class='container'>
+    <view class='text'>2018年10月</view>
+    <view class='content'>
+      <view class='dl' wx:for='{{informationData}}' wx:key='{{index}}' @tap='skip({{item.id}})'>
+        <view class='dt'>
+          <image src='{{item.downloadImageUrl}}'/>
+        </view>
+        <view class='dd'>
+          <text>{{item.day}}</text>
+          <text class="{{item.isSignIn === 1 ? 'active' : ''}}">{{item.isSignIn === 1 ? '已打卡' : '未打卡'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Information extends wepy.page {
+    config = {
+      navigationBarTitleText: '历史日签'
+    };
+
+    data = {
+      informationData: []
+    };
+
+    components = {};
+
+    methods = {
+      skip(e) {
+        wepy.navigateTo({ url: './ins?id='+e })
+      }
+    };
+
+    events = {};
+
+    watch = {};
+
+    computed = {};
+
+    onLoad() {
+      wepy.request({
+        url: 'https://easy-mock.com/mock/5b61a0332205a5414ac525da/example/information',
+        method: 'GET',
+        contentType: 'application/json',
+        success: (res) => {
+          this.informationData = res.data.dailyRecmdCardList
+          this.informationData.map((item, index) => {
+            item.day = item.day.slice(5)
+            this.$apply()
+          })
+          this.$apply()
+        },
+        fail: () => {},
+        complete: () => {}
+      })
+    };
+
+    onShow() { };
+  }
+</script>

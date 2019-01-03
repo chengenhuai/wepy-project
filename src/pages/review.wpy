@@ -1,0 +1,15 @@
+<template>
+  <view class='container'>
+      Review page
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Review extends wepy.page {
+    data = {}
+  }
+</script>
+
+<style lang='less'>
+</style>

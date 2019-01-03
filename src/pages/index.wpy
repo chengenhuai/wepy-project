@@ -1,0 +1,246 @@
+<style lang="less">
+.nav{
+  flex-shrink: 0;
+  width:90%;
+  margin: 0 auto;
+  display:flex;
+  flex-wrap: wrap;
+  height:150rpx;
+  border-bottom: 1px solid #c1c1c1;
+  .nav_dl{
+    flex:1;
+    display:flex;
+    &:nth-of-type(2) .nav_dl_dt{
+      background: rgb(55, 67, 75,97);
+    }
+    &:nth-of-type(2) .nav_dl_dd{
+      border:none;
+    }
+    .nav_dl_dt{
+      width:90rpx;
+      height:90rpx;
+      margin:25rpx 0;
+      margin-left: 20rpx;
+      background: orange;
+      border-radius: 45rpx;
+      image{
+        width:60rpx;
+        height:60rpx;
+        margin:10rpx 10rpx;
+      }
+    }
+    .nav_dl_dd{
+      width:100%;
+      height:80rpx;
+      font-size: 30rpx;
+      margin-left:10rpx;
+      margin-top: 30rpx;
+      border-right:1px solid #ccc;
+      view{
+        width:100%;
+        height:40rpx;
+        line-height:40rpx;
+        overflow: hidden;
+        &:nth-of-type(2){
+          font-size: 25rpx;
+          color:#9e9e9e;
+        }
+      }
+    }
+  }
+}
+.container{
+  flex-shrink: 0;
+  width:100%;
+  height:100%;
+  .dialog{
+    width:100%;
+    height:100%;
+    position: fixed;
+    top:0;
+    left:0;
+    background:rgba(0,0,0,.4);
+    z-index:20;
+    .dialog-image{
+      width:80%;
+      height:80%;
+      margin:10%;
+      margin-top: 15%;
+      position: relative;
+      view{
+        width:60rpx;
+        height:60rpx;
+        position: absolute;
+        background:rgba(0,0,0,.6);
+        color:#fff;
+        line-height: 60rpx;
+        font-size: 40rpx;
+        text-align: center;
+        border-radius: 50%;
+        right:-60rpx;
+        top:-60rpx;
+      }
+      #mark{
+        width: 100%;
+        height: 100%;
+        background: #fff;
+      }
+    }
+  }
+}
+.swiper-box{
+  flex-shrink: 0;
+  width:100%;
+  height: 300rpx;
+  swiper-item{
+    width:100%;
+    height: 300rpx;
+    image{
+      width:100%;
+      height: 300rpx;
+    }
+  }
+}
+.swiper-box .wx-swiper-dots.wx-swiper-dots-horizontal{
+     margin-bottom: 2rpx;
+}
+.swiper-box .wx-swiper-dot{
+    width:40rpx;
+    display: inline-flex;
+    height: 10rpx; 
+    margin-left: 20rpx;
+    justify-content:space-between;
+}
+.swiper-box .wx-swiper-dot::before{
+    content: '';
+    flex-grow: 1;  
+    background: rgba(255,255,255,0.8);
+    border-radius: 8rpx
+}
+.swiper-box .wx-swiper-dot-active::before{
+    background:rgba(244,0,0,0.8);    
+}
+</style>
+<template>
+
+<view class="container">
+  <!-- <swiper class="swiper-box" indicator-dots="#fff" autoplay="true">
+        <block wx:for="{{image}}" wx:key="{{index}}">
+            <swiper-item>
+              <image class="slide-image" src="{{item.url}}"></image> 
+            </swiper-item>
+        </block>
+    </swiper> -->
+  <Swipers :image='image'></Swipers>
+  <view class='nav'>
+    <view class='nav_dl' @tap='dialog'>
+      <view class='nav_dl_dt'>
+        <image src='../images/sign.png'></image>
+      </view>
+      <view class='nav_dl_dd'>
+        <view>海报日签</view>
+        <view>快来解锁新海报啦</view>
+      </view>
+    </view>
+    <view class='nav_dl'>
+      <view class='nav_dl_dt'>
+        <image src='../images/search_video.png'></image>
+      </view>
+      <view class='nav_dl_dd' @tap='skip'>
+        <view>找电影</view>
+        <view>科幻 悬疑 美剧</view>
+      </view>
+    </view>
+  </view>
+  <Contents :teleVideo.sync='teleVideo'></Contents>
+  <Globals :teleContent.sync='teleContent'></Globals>
+  <view class='dialog' hidden='{{show}}'>
+    <view class='dialog-image'>
+      <view @tap='dialog'>X</view>
+      <canvas canvas-id='mark' id='mark' @tap='historyDate'>canvas</canvas>
+    </view>
+  </view>
+</view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Swipers from '../components/swiper'
+  import Contents from '../components/content'
+  import Globals from '../components/global'
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: '毒舌Pro'
+    }
+    components = {
+      Swipers,
+      Contents,
+      Globals
+    }
+
+    data = {
+      teleContent: [],
+      teleVideo: [],
+      image: [{
+        url: '../images/banner_01.jpg'
+      }, {
+        url: '../images/banner_02.jpg'
+      }, {
+        url: '../images/banner_03.jpg'
+      }],
+      show: true
+    }
+
+    methods = {
+      dialog() {
+        this.show = !this.show
+        this.$apply()
+      },
+      historyDate() {
+        wepy.navigateTo({ url: './information' })
+      },
+      skip() {
+        wepy.navigateTo({ url: './point' })
+      }
+    }
+
+    events = {}
+
+    onLoad() {
+      wepy.showLoading()
+      wepy.request({
+        url: 'https://cdnapp.dushemovie.com/dsmovieapi/ssl2/weixin_movie/list_daily_recmd_movie_sheet/2?count=10&movieCount=3&position=2&startIndex=0',
+        method: 'GET',
+        dataType: 'json',
+        success: (res) => {
+          this.teleContent = res.data.movieSheetList
+          this.$apply()
+        },
+        fail: () => {},
+        complete: () => {
+          wepy.hideLoading()
+        }
+      })
+      wepy.request({
+        url: 'https://cdnapp.dushemovie.com/dsmovieapi/ssl2/video/list_videos/1?count=3&startIndex=0',
+        method: 'GET',
+        dataType: 'json',
+        success: (res) => {
+          this.teleVideo = res.data.videoDataList
+          this.$apply()
+        },
+        fail: () => {},
+        complete: () => {
+          wepy.hideLoading()
+        }
+      })
+      var context = wepy.createCanvasContext('mark')
+      context.drawImage('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537199649697&di=a37621356c38f5ab7551a938bf82b78c&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F012d62591e4842b5b3086ed4fe60e7.jpg%401280w_1l_2o_100sh.jpg', 10, 10, 300, 300)
+      context.setFontSize(22)
+      context.fillText('Hello', 40, 50)
+      context.fillText('2018年', 40, 400)
+      context.stroke()
+      context.draw()
+    }
+  }
+</script>

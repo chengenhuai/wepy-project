@@ -1,0 +1,67 @@
+<template>
+ <view class="box">
+ <view class="title">{{title}}</view>
+   <scroll-view  scroll-x class="srcoll" style="height:50rpx;border-bottom:1px solid #eee;" >
+    <repeat  for="{{catlist}}">
+       <view class="{{index==gl?'active':'cat-item'}}" @tap="gl" id="{{index}}"  data-name="{{item}}">{{item}}</view>
+      </repeat>
+  </scroll-view>
+ </view> 
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class   Choose extends wepy.component{
+  data={
+   gl:0
+  }
+  props={
+  title:{
+    type:String
+  },
+  catlist:{
+    type:Array
+  },
+  cattype:{
+    type:String
+  }
+  }
+  methods={
+    gl(e){
+     this.gl = e.currentTarget.id;
+     this.$emit('pick',e.currentTarget.dataset.name,this.cattype);
+    }
+  }
+}
+</script>
+
+<style>
+.box{
+  width: 100%;
+  display: flex;
+  margin-top: 20rpx;
+}
+.title{
+  width: 15%;
+  line-height: 50rpx;
+}
+.cat-item{
+  display: inline-block;
+  margin: 0  10rpx;
+}
+
+.srcoll{
+  border-bottom:1px solid #eee;
+  width:85%;
+  white-space: nowrap;
+  line-height: 50rpx;
+}
+.active{
+  color: goldenrod;
+  background: #ccc;
+  display: inline-block;
+  padding: 0  10rpx;
+  border-radius: 15rpx;
+}
+
+</style>

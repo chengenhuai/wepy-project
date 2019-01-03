@@ -1,0 +1,37 @@
+<template>
+ <calendar />
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Date extends wepy.component {
+    config = {
+      navigationBarTitleText: '选择日期',
+      usingComponents: {
+        calendar: 'plugin://calendar/calendar'
+      }
+    }
+
+    props = {};
+
+    data = {};
+
+    components = {};
+
+    methods = {};
+
+    events = {};
+
+    watch = {};
+
+    computed = {};
+
+    onLoad() { };
+
+    onShow() { };
+  }
+</script>
+
+<style lang='less'>
+
+</style>

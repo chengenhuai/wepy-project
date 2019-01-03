@@ -1,0 +1,316 @@
+<style>
+    .search {
+        width: 100%;
+        height: 100%;
+    }
+    .filmsearch {
+        width: 100%;
+        height: 130rpx;
+        border-bottom: 1px solid #ccc;
+        display: flex;
+        padding: 0 45rpx;
+        box-sizing: border-box;
+        justify-content: space-between;
+        line-height: 130rpx;
+    }
+    .filminput {
+        width: 80%;
+        height: 75rpx;
+        background: #F3F4F5;
+        border-radius: 40rpx;
+        position: relative;
+        margin: auto 0;
+    }
+    .filminput image {
+        width: 40rpx;
+        height: 40rpx;
+        position: absolute;
+        top: 20rpx;
+        left: 20rpx;
+    }
+    .filminput input {
+        width: 100%;
+        height: 100%;
+        border-radius: 40rpx;
+        font-size: 30rpx;
+        padding-left: 70rpx;
+    }
+    .fault {
+        width: 42rpx;
+        height: 42rpx;
+        border-radius: 42rpx;
+        background: #999999;
+        text-align: center;
+        line-height: 36rpx;
+        position: absolute;
+        top: 16rpx;
+        right: 20rpx;
+        z-index: 200;
+    }
+    .cancel {
+        width: 116rpx;
+        height: 73rpx;
+        font-size: 30rpx;
+        line-height: 73rpx;
+        margin: auto 0;
+    }
+    .content {
+        width: 100%;
+        padding: 0 40rpx;
+        box-sizing: border-box;
+    }
+    .hotsearch {
+        margin: 20px 0;
+        /* margin-bottom: 200rpx; */
+    }
+    .hottxt,
+    .classifytxt {
+        color: #999999;
+        line-height: 80rpx;
+        font-size: 32rpx;
+    }
+    .classify {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .hotdrama {
+        display: inline-block;
+        margin: 8rpx 10rpx;
+        padding: 6rpx 32rpx;
+        height: 70rpx;
+        background: #f9f9f9;
+        text-align: center;
+        line-height: 70rpx;
+        font-size: 30rpx;
+    }
+    .classifydrama {
+        margin: 10rpx;
+        width: 16%;
+        height: 70rpx;
+        background: #f9f9f9;
+        text-align: center;
+        line-height: 70rpx;
+        font-size: 30rpx;
+    }
+</style>
+<template>
+    <view class="search">
+        <view class="filmsearch">
+            <view class="filminput">
+                <input placeholder="找影片、导演、演员、影评" value="{{iptvalue}}" @confirm="confimValue" />
+                <image src="../images/search.png" />
+                <view class="fault" hidden="{{isTrue}}" @tap="faultClick">x</view>
+            </view>
+            <button class="cancel" @tap="cancalClick">取消</button>
+        </view>
+        <!-- 渲染搜索后数据 -->
+        <view class="contentBySearch" hidden="{{searchFlag}}">
+            <view class="moviePerson">影人</view>
+            <view class="moviePeronContent">
+                <repeat for="{{filmPersonList}}">
+                    <view class="movieConItem">
+                        <image src="{{item.moviePersonInfo.img}}" class="personImg" />
+                        <view class="personName">{{item.moviePersonInfo.name}}</view>
+                    </view>
+                </repeat>
+            </view>
+            <view class="moviePerson">影视</view>
+            <view class="moviePeronContent">
+                <repeat for="{{filmList}}">
+                    <view class="movieContentItem">
+                        <image src="{{item.movieInfo.img}}" class="movieImg" />
+                        <view class="personName">
+                            <view class="pertit">{{item.movieInfo.title}}</view>
+                            <view class="perdes">{{item.movieInfo.heatValueIntro}}</view>
+                        </view>
+                    </view>
+                </repeat>
+            </view>
+            <view class="moviePerson">相关{{searchValue}}文章</view>
+            <view class="articleCon">
+                <repeat for="{{searchArticleList}}">
+                    <view class="articleItem">
+                        <view class="topItem">
+                            <image src="{{item.articleData.articleInfo.horizonImageUrl}}" />
+                            <text>{{item.articleData.articleInfo.author}}</text>
+                        </view>
+                        <view class="artileTit">{{item.articleData.articleInfo.title}}</view>
+                        <view class="articleDes">
+                            {{item.highlights.content}}
+                        </view>
+                    </view>
+                </repeat>
+            </view>
+        </view>
+        <!-- 数据 -->
+        <view class="content">
+            <!-- 历史搜索 -->
+            <view class="history">
+                <view hidden="{{true}}" class="hissearch">历史搜索</view>
+                <view>
+                    <repeat for='{{historyList}}'>
+                        <view class='it'>{{item}}</view>
+                    </repeat>
+                </view>
+            </view>
+            <!-- 热门搜索 -->
+            <view class="hotsearch">
+                <view class="hottxt">热门搜索</view>
+                <view>
+                    <repeat for="{{hotList}}">
+                        <view class="hotdrama" @tap="hotdramaClick" data-value="{{item}}">{{item}}</view>
+                    </repeat>
+                </view>
+            </view>
+            <!-- 分类 -->
+            <view class="classification">
+                <view class="classifytxt">分类</view>
+                <view class="classify">
+                    <repeat for="{{classifyList}}">
+                        <view class="classifydrama">{{item.name}}</view>
+                    </repeat>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import axios from '../utils/http.js'
+    export default class Search extends wepy.page {
+        config = {
+            navigationBarTitleText: '搜资源'
+        }
+        data = {
+            hotList: [],
+            classifyList: [],
+            iptvalue: '',
+            isTrue: true,
+            flag: true,
+            historyList: [],
+            filmPersonList: [],
+            filmList: [],
+            searchArticleList: [],
+            searchFlag: true
+        }
+        methods = {
+            hotdramaClick(e) {
+                this.iptvalue = e.currentTarget.dataset.value;
+                if (e.currentTarget.dataset.value != '') {
+                    this.isTrue = false
+                }
+            },
+            //    监听input的值
+            confimValue(e) {
+                console.log('eee', e.detail.value);
+                this.methods.searchList(e.detail.value)
+            },
+            cancalClick() {
+                this.iptvalue = '';
+                wx.switchTab({
+                    url: '../index'
+                })
+            },
+            faultClick() {
+                this.iptvalue = '';
+                this.isTrue = true;
+                this.searchFlag = true;
+            },
+            searchList: function(value) {
+                let idx = this.historyList.indexOf(value)
+                if (idx === -1) {
+                    wx.setStorageSync('searchHistory', [this.historyList.unshift, value])
+                    this.historyList = [...this.historyList, value]
+                } else {
+                    let arr = [...this.historyList]
+                    arr.splice(idx, 1)
+                    wx.setStorageSync('searchHistory', [arr.unshift, value])
+                    this.historyList = [...arr, value]
+                }
+                //    wx.setStorageSync('searchHistory',[])
+                wx.showLoading();
+                let that = this;
+                axios.all([
+                    axios.post('https://dswxapp.dushemovie.com/dsmovieapi/ssl2/search/search_movie_person/1', {
+                        count: 5,
+                        key: value,
+                        startIndex: 0,
+                        userId: 5996453,
+                        sign: '1667de932404b89d3a0a318d87ef81d2'
+                    }),
+                    axios.post('https://dswxapp.dushemovie.com/dsmovieapi/ssl2/search/search_movie/1', {
+                        count: 5,
+                        key: value,
+                        startIndex: 0,
+                        userId: 5996453,
+                        sign: '1667de932404b89d3a0a318d87ef81d2'
+                    }),
+                    axios.post('https://dswxapp.dushemovie.com/dsmovieapi/ssl2/search/search_article/1', {
+                        count: 5,
+                        key: value,
+                        needTransWxNode: 1,
+                        startIndex: 0,
+                        state: 1,
+                        type: -1,
+                        userId: 5996453,
+                        sign: 'a1453bf101bc6364e54584604a9013ac'
+                    })
+                ]).then(res => {
+                    setTimeout(() => {
+                        wx.hideLoading()
+                    }, 500);
+                    that.filmPersonList = res[2].moviePersonDataList
+                    that.filmList = res[1].movieDataList
+                    that.searchArticleList = res[0].searchArticleDataList
+                    that.searchFlag = false;
+                    console.log(res)
+                    that.$apply();
+                })
+            }.bind(this),
+            //  获取数据
+            searchData: function() {
+                let that = this;
+                wx.showLoading()
+                axios.all(
+                    [ // 热门搜索
+                        axios.post(
+                            'https://dswxapp.dushemovie.com/dsmovieapi/ssl2/search/list_hot_key/1', {
+                                "count": 10,
+                                "userId": 5996462,
+                                "sign": "f8e611815d32a9560ebe358e0dd94753"
+                            },
+                        ),
+                        // 搜索分类
+                        axios.post(
+                            'https://dswxapp.dushemovie.com/dsmovieapi/ssl2/weixin_category/list_hot_category/1', {
+                                "count": 10,
+                                "userId": 5996462,
+                                "sign": "f8e611815d32a9560ebe358e0dd94753"
+                            },
+                        ),
+                    ]
+                ).then(res => {
+                    setTimeout(() => {
+                        wx.hideLoading()
+                    }, 500);
+                    that.hotList = res[0].keyList;
+                    that.classifyList = res[1].categoryList;
+                    that.$apply();
+                })
+            }.bind(this)
+        }
+        onLoad() {
+            let that = this;
+            let sh = wx.getStorageSync('searchHistory');
+            if (sh === '') {
+                wx.setStorageSync('searchHistory', [])
+            } else {
+                this.historyList = sh;
+                this.flag = true
+            }
+            this.methods.searchData()
+        }
+    }
+</script>

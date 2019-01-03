@@ -1,0 +1,196 @@
+<template>
+  <view class="big-box">
+    <choose1 title="形式:" :catlist.sync="mediaList" cattype="media"></choose1>
+    <choose2 title="地区:" :catlist.sync="areaList" cattype="area"></choose2>
+    <choose3 title="类型:" :catlist.sync="typeList" cattype="type"></choose3>
+    <choose4 title="特色:" :catlist.sync="featureList" cattype="feature"></choose4>
+
+    <view class="movielist">
+      <view class="abc" wx:for="{{moviesinfo}}" wx:key="{{index}}">
+        <view class="img">
+          <image src="{{item.movieInfo.img}}" />
+        </view>
+        <view class="info">
+          <view class="title">{{item.movieInfo.title}}</view>
+          <view class="type"><text wx:for="{{item.movieInfo.type}}" wx:key="{{index}}">{{item}}</text> </view>
+          <view class="name"><text wx:for="{{item.directorBasicInfoList}}" wx:key="{{index}}">{{item.name}}</text>
+          </view>
+        </view>
+        <view class="number">
+          <view class="bold">{{item.movieInfo.recmdMeter}}%</view>
+          <view class="if">毒舌好看指数</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import Choose from '../components/choose'
+  export default class movies extends wepy.page {
+    config = {
+      navigationBarTitleText: "分类"
+    }
+    components = {
+      choose1: Choose,
+      choose2: Choose,
+      choose3: Choose,
+      choose4: Choose
+    }
+    data = {
+      areaList: [],
+      featureList: [],
+      mediaList: [],
+      typeList: [],
+      moviesinfo: [],
+      o: {
+        area: "全部",
+        count: 20,
+        feature: "电影",
+        media: "全部",
+        type: "全部",
+        startIndex: 0
+      }
+    }
+    events = {
+      pick(d, type, event) {
+        this.o[type] = d;
+        let dates = this.o;
+        let str = '';
+        for (let i in dates) {
+          str += (i + '=' + dates[i] + '&');
+        }
+        str.slice(-1);
+        str = encodeURI(str);
+        wepy.request({
+          url: `https://cdnapp.dushemovie.com/dsmovieapi/ssl2/movie/list_movie_by_type/1?${str}`
+        }).then(res => {
+          this.moviesinfo = res.data.movieDataList;
+        })
+      }
+    }
+    onLoad() {
+      let that = this;
+      let newAjax = (url) => {
+          return new Promise((reslove, reject) => {
+              wepy.request({
+                url: url,
+                method: 'GET',
+                dataType: 'json', //如果设为json，会尝试对返回的数据做一次 JSON.parse
+                success: (res) => {
+                    reslove(res)
+                },
+                fail: () => {},
+                complete: () => {}
+              })
+          })
+      }
+
+      let request_01 = newAjax('https://cdnapp.dushemovie.com/dsmovieapi/ssl2/movie/list_type/1')
+      let request_02 = newAjax('https://cdnapp.dushemovie.com/dsmovieapi/ssl2/movie/list_movie_by_type/1')
+
+      Promise.all([
+        request_01,request_02
+      ]).then(res => {
+          console.log(res)
+        that.areaList = res[0].data.movieTypeData.areaList;
+        that.featureList = res[0].data.movieTypeData.featureList;
+        that.mediaList = res[0].data.movieTypeData.mediaList;
+        that.typeList = res[0].data.movieTypeData.typeList;
+        that.moviesinfo = res[1].data.movieDataList;
+        that.$apply();
+      })
+    }
+  }
+
+</script>
+
+<style>
+  page {
+    width: 100%;
+    height: 100%;
+  }
+
+  .big-box {
+    width: 100%;
+    height: auto;
+    font-size: 30rpx;
+  }
+
+  .movielist {
+    width: 100%;
+    height: auto;
+    padding: 0 20rpx;
+    box-sizing: border-box;
+  }
+
+  .abc {
+    width: 100%;
+    height: auto;
+    display: flex;
+    margin-top: 30rpx;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .abc .img {
+    width: 20%;
+  }
+
+  .abc .img image {
+    width: 100%;
+    height: 200rpx;
+  }
+
+  .abc .info {
+    width: 50%;
+    margin-left: 17rpx;
+    color: #bbb;
+    line-height: 50rpx;
+  }
+
+  .abc .info .name {
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .abc .info .type {
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .abc .info .title {
+    font-weight: bold;
+    width: 100%;
+    font-size: 38rpx;
+    color: black;
+  }
+
+  .abc .number {
+    width: 28%;
+    height: 120rpx;
+    border-radius: 10rpx;
+    border: 1px solid yellow;
+  }
+
+  .abc .number .bold {
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    color: orange;
+    font-size: 38rpx;
+  }
+
+  .abc .number .if {
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    color: orange;
+    margin-top: 10rpx;
+  }
+
+</style>
